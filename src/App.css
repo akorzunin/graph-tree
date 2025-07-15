@@ -21,13 +21,15 @@
   -webkit-text-size-adjust: 100%;
 }
 
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+/* File Explorer Styles */
+.file-explorer {
+    border-right: 1px solid #ddd;
+}
+
+.graph-container {
+    width: calc(100% - 256px);
+    height: calc(100vh - 60px);
+    overflow-y: auto;
 }
 
 .logo {
