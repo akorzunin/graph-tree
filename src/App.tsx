@@ -1,53 +1,61 @@
-import Cytoscape from "cytoscape";
-import CytoscapeComponent from "react-cytoscapejs";
-// import COSEBilkent from "cytoscape-cose-bilkent";
-import d3Force from "cytoscape-d3-force";
+// import ForceGraph2D from "https://esm.sh/react-force-graph-2d?external=react";
+import ForceGraph2D from "react-force-graph-2d";
 
-// Cytoscape.use(COSEBilkent);
-Cytoscape.use(d3Force);
-
-export function MyApp() {
-  const elements = [
-    { data: { id: "one", label: "Node 1" }, position: { x: 200, y: 100 } },
-    { data: { id: "two", label: "Node 2" }, position: { x: 100, y: 200 } },
-    {
-      data: {
-        source: "one",
-        target: "two",
-        label: "Edge from Node1 to Node2",
-      },
-    },
-  ];
-  // const layout = { name: "cose-bilkent" };
-  const layout = {
-    name: "d3-force",
-    animate: true,
-    fixedAfterDragging: false,
-    linkId: function id(d: { id: any; }) {
-      return d.id;
-    },
-    linkDistance: 80,
-    manyBodyStrength: -300,
-    ready: function () {},
-    stop: function () {},
-    tick: function (progress: any) {
-      console.log("progress - ", progress);
-    },
-    randomize: false,
-    infinite: true,
-    // some more options here...
+function genRandomTree(N = 300, reverse = false) {
+  return {
+    nodes: [...Array(N).keys()].map((i) => ({ id: i })),
+    links: [...Array(N).keys()]
+      .filter((id) => id)
+      .map((id) => ({
+        [reverse ? "target" : "source"]: id,
+        [reverse ? "source" : "target"]: Math.round(Math.random() * (id - 1)),
+      })),
   };
+}
 
+function nodePaint({ id, x, y }, color, ctx) {
+  ctx.fillStyle = color;
+  [
+    () => {
+      ctx.fillRect(x - 6, y - 4, 12, 8);
+    }, // rectangle
+    () => {
+      ctx.beginPath();
+      ctx.moveTo(x, y - 5);
+      ctx.lineTo(x - 5, y + 5);
+      ctx.lineTo(x + 5, y + 5);
+      ctx.fill();
+    }, // triangle
+    () => {
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
+      ctx.fill();
+    }, // circle
+    () => {
+      ctx.font = "12px Sans-Serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Text", x, y);
+    }, // text
+  ][id % 4]();
+}
+
+// gen a number persistent color from around the palette
+const getColor = (n) =>
+  "#" + ((n * 1234567) % Math.pow(2, 24)).toString(16).padStart(6, "0");
+
+// createRoot(document.getElementById("graph")).render();
+export function MyApp() {
   return (
     <>
-      <CytoscapeComponent
-        elements={elements}
-        layout={layout}
-        className="h-[80vh] w-screen"
+      <ForceGraph2D
+        graphData={genRandomTree(20)}
+        nodeLabel="id"
+        nodeCanvasObject={(node, ctx) =>
+          nodePaint(node, getColor(node.id), ctx)
+        }
+        nodePointerAreaPaint={nodePaint}
       />
-      <div className="">
-        <h1>Hello World</h1>
-      </div>
     </>
   );
 }
