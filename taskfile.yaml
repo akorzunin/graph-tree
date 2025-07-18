@@ -1,0 +1,24 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task: debug
+
+  run-react-dev-tools:
+    internal: true
+    cmds:
+      - pnpm react-devtools
+
+  run-tauri-dev:
+    internal: true
+    interactive: true
+    cmds:
+      - pnpm tauri dev
+
+  debug:
+    deps:
+      - run-tauri-dev
+      - run-react-dev-tools
+    cmds:
+      - echo "debug seeion ended 💥"
