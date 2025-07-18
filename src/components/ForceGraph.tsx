@@ -45,7 +45,7 @@ const getColor = (n) =>
   "#" + ((n * 1234567) % Math.pow(2, 24)).toString(16).padStart(6, "0");
 
 // createRoot(document.getElementById("graph")).render();
-export function MyApp() {
+export function ForceGraph() {
   return (
     <>
       <ForceGraph2D
