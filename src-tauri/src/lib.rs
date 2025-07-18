@@ -10,9 +10,18 @@ pub fn run() {
         .setup(|app| {
             #[cfg(debug_assertions)] // only include this code on debug builds
             {
-                use tauri::Manager;
+                use tauri::{Manager, PhysicalPosition, PhysicalSize};
 
                 let window = app.get_webview_window("main").unwrap();
+                window
+                    .set_size(PhysicalSize {
+                        width: 1276,
+                        height: 690,
+                    })
+                    .unwrap();
+                window
+                    .set_position(PhysicalPosition { x: 1276 - 6, y: 0 })
+                    .unwrap();
                 window.open_devtools();
                 window.close_devtools();
             }
