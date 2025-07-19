@@ -1,3 +1,3 @@
 export const MenuBar = () => {
-  return <div >MenuBar</div>;
+  return <div>MenuBar</div>;
 };

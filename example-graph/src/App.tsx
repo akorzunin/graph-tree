@@ -27,9 +27,8 @@ export default function App() {
   const cyRef = React.useRef<cytoscape.Core | undefined>();
   const [elements, setElements] = React.useState(() => generateGraph(8));
   const [layout, setLayout] = React.useState(layouts.klay);
-  const [stylesheet, setStylesheet] = React.useState<Stylesheet[]>(
-    getDefaultStylesheet
-  );
+  const [stylesheet, setStylesheet] =
+    React.useState<Stylesheet[]>(getDefaultStylesheet);
   return (
     <div className="App">
       <table>
@@ -79,7 +78,7 @@ export default function App() {
                   style={{
                     width: "800px",
                     height: "500px",
-                    border: "1px solid black"
+                    border: "1px solid black",
                   }}
                   layout={layout}
                   stylesheet={stylesheet}

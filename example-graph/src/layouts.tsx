@@ -1,19 +1,19 @@
 export const layouts: Record<string, any> = {
   random: {
     name: "random",
-    animate: true
+    animate: true,
   },
   grid: {
     name: "grid",
-    animate: true
+    animate: true,
   },
   circle: {
     name: "circle",
-    animate: true
+    animate: true,
   },
   breadthfirst: {
     name: "breadthfirst",
-    animate: true
+    animate: true,
   },
   klay: {
     name: "klay",
@@ -22,27 +22,27 @@ export const layouts: Record<string, any> = {
     nodeDimensionsIncludeLabels: true,
     klay: {
       spacing: 40,
-      mergeEdges: false
-    }
+      mergeEdges: false,
+    },
   },
   fcose: {
     name: "fcose",
-    animate: true
+    animate: true,
   },
   cose: {
     name: "cose",
-    animate: true
+    animate: true,
   },
 
   cola: {
     name: "cola",
     animate: true,
-    maxSimulationTime: 40000
+    maxSimulationTime: 40000,
   },
   dagre: {
     name: "dagre",
-    animate: true
-  }
+    animate: true,
+  },
 };
 
 ["box", "disco", "force", "layered", "mrtree", "random", "stress"].forEach(
@@ -51,8 +51,8 @@ export const layouts: Record<string, any> = {
       name: "elk",
       animate: true,
       elk: {
-        algorithm: elkAlgo
-      }
+        algorithm: elkAlgo,
+      },
     };
-  }
+  },
 );
