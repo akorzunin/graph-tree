@@ -14,6 +14,8 @@ tasks:
     aliases:
       - td
     interactive: true
+    preconditions:
+      - sh: pnpm i
     cmds:
       - pnpm tauri dev
 
