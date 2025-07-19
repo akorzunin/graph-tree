@@ -1,81 +1,71 @@
-// import ForceGraph2D from "https://esm.sh/react-force-graph-2d?external=react";
 import ForceGraph2D from "react-force-graph-2d";
-import { g2 } from "../uitls/test_layout";
-import { readDir, BaseDirectory } from "@tauri-apps/plugin-fs";
-import { fetchFiles } from "../uitls/fs";
+import { fetchFiles, FileNode } from "../uitls/fs";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-function nodePaint({ id, x, y, label }, color, ctx) {
+const BASE_RADIUS = 6;
+
+//   () => {
+//     ctx.beginPath();
+//     ctx.moveTo(x, y - 5);
+//     ctx.lineTo(x - 5, y + 5);
+//     ctx.lineTo(x + 5, y + 5);
+//     ctx.fill();
+//   }, // triangle
+
+function nodePaint(
+  node: FileNode & { x: number; y: number },
+  color: string,
+  ctx: CanvasRenderingContext2D,
+) {
+  ctx.fillStyle = "#000";
+  ctx.font = "12px Sans-Serif";
+  ctx.textAlign = "center";
+  ctx.fillText(node.label, node.x, node.y - 12);
+
   ctx.fillStyle = color;
-  if (id === "aboba") {
-    ctx.fillRect(x - 6, y - 4, 12, 8);
-    ctx.font = "12px Sans-Serif";
-    // ctx.textAlign = "top";
-    ctx.textBaseline = "bottom";
-    ctx.fillText(id, x, y);
+
+  if (!node.label) {
+    ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
+    return;
   }
-  if (label) {
-    ctx.font = "12px Sans-Serif";
-    // TODO: center text on top of node
-    // ctx.textBaseline = "middle";
-    ctx.fillText(label, x, y);
-  }
-  // if (id === 0) {
-  //   // console.log(label);
-  // }
-  // ctx.font = "12px Sans-Serif";
-  // ctx.textAlign = "center";
-  // ctx.textBaseline = "middle";
-  // ctx.fillText("Text", x, y);
-  ctx.fillRect(x - 6, y - 4, 12, 8);
-  // [
-  //   () => {
-  //     ctx.fillRect(x - 6, y - 4, 12, 8);
-  //   }, // rectangle
-  //   () => {
-  //     ctx.beginPath();
-  //     ctx.moveTo(x, y - 5);
-  //     ctx.lineTo(x - 5, y + 5);
-  //     ctx.lineTo(x + 5, y + 5);
-  //     ctx.fill();
-  //   }, // triangle
-  //   () => {
-  //     ctx.beginPath();
-  //     ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
-  //     ctx.fill();
-  //   }, // circle
-  //   () => {
-  //     ctx.font = "12px Sans-Serif";
-  //     ctx.textAlign = "center";
-  //     ctx.textBaseline = "middle";
-  //     ctx.fillText("Text", x, y);
-  //   }, // text
-  // ][id % 4]();
+  ctx.beginPath();
+  ctx.arc(node.x, node.y, BASE_RADIUS * 1.5, 0, 2 * Math.PI, false);
+  ctx.fill();
 }
 
-// gen a number persistent color from around the palette
-const getColor = (n) =>
-  "#" + ((n * 1234567) % Math.pow(2, 24)).toString(16).padStart(6, "0");
+function onNodeClick(node: any) {
+  console.log(node);
+}
 
-// createRoot(document.getElementById("graph")).render();
 export function ForceGraph() {
+  const [pwd, setPwd] = useState(".");
   const gd = useQuery({
-    queryKey: ["graphData"],
+    queryKey: ["graphData", pwd],
     queryFn: async () => {
-      return await fetchFiles(".");
+      return await fetchFiles(pwd);
     },
   });
   return (
     <>
       {gd.isLoading && <div>Loading...</div>}
       <ForceGraph2D
-        // graphData={async () => {return await fetchFiles(".")}}
+        // @ts-expect-error
         graphData={gd.data}
-        nodeLabel="id"
-        nodeCanvasObject={(node, ctx) =>
-          nodePaint(node, getColor(node.id), ctx)
-        }
+        nodeLabel="label"
+        // d3VelocityDecay={0.1}
+        // d3AlphaMin={0}
+        // nodeCanvasObject={(node, ctx) =>
+        //   nodePaint(node, getColor(node.id), ctx)
+        // }
+        nodeCanvasObject={(node, ctx) => nodePaint(node, node.color, ctx)}
         nodePointerAreaPaint={nodePaint}
+        onNodeClick={onNodeClick}
+        backgroundColor="oklch(70.4% 0.04 256.788)"
+        // nodeRelSize={1}
+        // nodeVal={10}
+        // dagMode={"radialin"}
+        // dagLevelDistance={50}
       />
     </>
   );
