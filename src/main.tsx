@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { ForceGraph } from "./components/ForceGraph";
+import { FG } from "./components/ForceGraph";
 import { MenuBar } from "./components/MenuBar";
 import { ErrorBoundary } from "react-error-boundary";
 import { err } from "./components/err";
@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ErrorBoundary fallbackRender={err}>
       <QueryClientProvider client={queryClient}>
         <MenuBar />
-        <ForceGraph />
+        <FG />
       </QueryClientProvider>
     </ErrorBoundary>
   </React.StrictMode>,

@@ -25,7 +25,6 @@ export async function fetchFiles(path: string) {
     color: getColor(l.length),
   };
 
-  console.log([root, ...l]);
   return {
     nodes: [root, ...l],
     links: getLinks(root, l),

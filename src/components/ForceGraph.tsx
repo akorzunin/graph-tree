@@ -1,7 +1,16 @@
+import type ForceGraph from "force-graph";
 import ForceGraph2D from "react-force-graph-2d";
 import { fetchFiles, FileNode } from "../uitls/fs";
+
+interface FileNodeWithCoords extends FileNode {
+  x: number;
+  y: number;
+}
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { GraphControls } from "./GraphControls";
+import { useAtomValue } from "jotai";
+import { chargeAtom, distanceAtom, strengthAtom } from "../store/store";
 
 const BASE_RADIUS = 6;
 
@@ -14,7 +23,7 @@ const BASE_RADIUS = 6;
 //   }, // triangle
 
 function nodePaint(
-  node: FileNode & { x: number; y: number },
+  node: FileNodeWithCoords,
   color: string,
   ctx: CanvasRenderingContext2D,
 ) {
@@ -38,7 +47,11 @@ function onNodeClick(node: any) {
   console.log(node);
 }
 
-export function ForceGraph() {
+export function FG() {
+  const fgRef = useRef<ForceGraph>(null);
+  const d = useAtomValue(distanceAtom);
+  const s = useAtomValue(strengthAtom);
+  const ch = useAtomValue(chargeAtom);
   const [pwd, setPwd] = useState(".");
   const gd = useQuery({
     queryKey: ["graphData", pwd],
@@ -46,26 +59,30 @@ export function ForceGraph() {
       return await fetchFiles(pwd);
     },
   });
+
+  useEffect(() => {
+    if (!fgRef.current) return;
+    const f = fgRef.current as ForceGraph;
+    f.d3Force("link")?.distance(d);
+    f.d3Force("link")?.strength(s);
+    f.d3Force("charge")?.strength(ch * -1);
+    f.zoom(1.2);
+    f.d3ReheatSimulation();
+  }, [d, s, ch]);
   return (
     <>
+      <GraphControls />
       {gd.isLoading && <div>Loading...</div>}
       <ForceGraph2D
         // @ts-expect-error
+        ref={fgRef}
+        // @ts-expect-error
         graphData={gd.data}
         nodeLabel="label"
-        // d3VelocityDecay={0.1}
-        // d3AlphaMin={0}
-        // nodeCanvasObject={(node, ctx) =>
-        //   nodePaint(node, getColor(node.id), ctx)
-        // }
         nodeCanvasObject={(node, ctx) => nodePaint(node, node.color, ctx)}
         nodePointerAreaPaint={nodePaint}
         onNodeClick={onNodeClick}
         backgroundColor="oklch(70.4% 0.04 256.788)"
-        // nodeRelSize={1}
-        // nodeVal={10}
-        // dagMode={"radialin"}
-        // dagLevelDistance={50}
       />
     </>
   );
