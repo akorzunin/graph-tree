@@ -13,14 +13,7 @@ import { useAtomValue } from "jotai";
 import { chargeAtom, distanceAtom, strengthAtom } from "../store/store";
 
 const BASE_RADIUS = 6;
-
-//   () => {
-//     ctx.beginPath();
-//     ctx.moveTo(x, y - 5);
-//     ctx.lineTo(x - 5, y + 5);
-//     ctx.lineTo(x + 5, y + 5);
-//     ctx.fill();
-//   }, // triangle
+const BASE_TRIANGLE_SIZE = 7;
 
 function nodePaint(
   node: FileNodeWithCoords,
@@ -38,9 +31,17 @@ function nodePaint(
     ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
     return;
   }
-  ctx.beginPath();
-  ctx.arc(node.x, node.y, BASE_RADIUS * 1.5, 0, 2 * Math.PI, false);
-  ctx.fill();
+  if (node.type === "dir") {
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, BASE_RADIUS * 1.5, 0, 2 * Math.PI, false);
+    ctx.fill();
+  } else if (node.type === "file") {
+    ctx.beginPath();
+    ctx.moveTo(node.x, node.y - BASE_TRIANGLE_SIZE);
+    ctx.lineTo(node.x - BASE_TRIANGLE_SIZE, node.y + BASE_TRIANGLE_SIZE);
+    ctx.lineTo(node.x + BASE_TRIANGLE_SIZE, node.y + BASE_TRIANGLE_SIZE);
+    ctx.fill();
+  }
 }
 
 function onNodeClick(node: any) {
