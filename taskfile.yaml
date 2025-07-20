@@ -20,6 +20,16 @@ tasks:
       - pnpm tauri dev
 
   debug:
+    aliases:
+      - d
+    deps:
+      - run-tauri-dev
+    cmds:
+      - echo "debug seeion started 💥"
+
+  debug-w-react-devtools:
+    aliases:
+      - dw
     deps:
       - run-tauri-dev
       - run-react-dev-tools
